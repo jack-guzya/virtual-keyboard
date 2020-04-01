@@ -1,129 +1,169 @@
-function createRows(array, divTarget) {
-  array.forEach((elem) => {
-    // создание рядов
-    const divRow = document.createElement('div');
-    divRow.className = 'row';
-    divTarget.append(divRow);
+import idKeys from './keys.js';
+import createKeys from './creating-keys.js';
+import { rusLow, rusUpper, rusShift } from './languages.js';
 
-    // создание клавишей в рядах
-    elem.forEach((key) => {
-      const divKey = document.createElement('div');
-      const secondaryLetter = document.createElement('p');
-      const mainLetter = document.createElement('p');
-
-      divKey.className = 'key';
-      secondaryLetter.className = 'secondary-letter';
-      mainLetter.className = 'main-letter';
-
-      if (key.mainFunc) {
-        divKey.classList.add('func');
-        divKey.classList.add(key.class);
-        mainLetter.insertAdjacentHTML('afterbegin', key.mainFunc);
-        divKey.append(mainLetter);
-      } else {
-        secondaryLetter.insertAdjacentHTML('afterbegin', key.secondary);
-        mainLetter.insertAdjacentHTML('afterbegin', key.main);
-        divKey.append(mainLetter);
-        divKey.append(secondaryLetter);
-      }
-      divRow.append(divKey); // добавление клавиш к ряду
-    });
-  });
+function addLetterToInput(input, letter) {
+  input.setRangeText(letter, input.selectionStart, input.selectionEnd, 'end');
+  input.focus();
 }
 
-const row1 = [
-  { main: 'ё', secondary: '' },
-  { main: '1', secondary: '!' },
-  { main: '2', secondary: '"' },
-  { main: '3', secondary: '№' },
-  { main: '4', secondary: ';' },
-  { main: '5', secondary: '%' },
-  { main: '6', secondary: ':' },
-  { main: '7', secondary: '?' },
-  { main: '8', secondary: '*' },
-  { main: '9', secondary: '(' },
-  { main: '0', secondary: ')' },
-  { main: '-', secondary: '_' },
-  { main: '=', secondary: '+' },
-  { mainFunc: 'Backspace', class: 'backspace' },
-];
 
-const row2 = [
-  { mainFunc: 'Tab', class: 'tab' },
-  { main: 'й', secondary: '' },
-  { main: 'ц', secondary: '' },
-  { main: 'у', secondary: '' },
-  { main: 'к', secondary: '' },
-  { main: 'е', secondary: '' },
-  { main: 'н', secondary: '' },
-  { main: 'г', secondary: '' },
-  { main: 'ш', secondary: '' },
-  { main: 'щ', secondary: '' },
-  { main: 'з', secondary: '' },
-  { main: 'х', secondary: '' },
-  { main: 'ъ', secondary: '' },
-  { main: '\\', secondary: '|' },
-  { mainFunc: 'Del', class: 'del' },
-];
+function addLetter(lib, keys) {
+  for (let i = 0; i < lib.length; (i += 1)) {
+    keys[i].insertAdjacentHTML('afterbegin', lib[i]);
+  }
+}
 
-const row3 = [
-  { mainFunc: 'Caps Lock', class: 'caps' },
-  { main: 'ф', secondary: '' },
-  { main: 'ы', secondary: '' },
-  { main: 'в', secondary: '' },
-  { main: 'а', secondary: '' },
-  { main: 'п', secondary: '' },
-  { main: 'р', secondary: '' },
-  { main: 'о', secondary: '' },
-  { main: 'л', secondary: '' },
-  { main: 'д', secondary: '' },
-  { main: 'ж', secondary: '' },
-  { main: 'э', secondary: '' },
-  { mainFunc: 'Enter', class: 'enter' },
-];
+function capsSwitch(libLow, libUpper, keys, caps) {
+  const upperKeys = keys;
+  for (let i = 0; i < libLow.length; (i += 1)) {
+    switch (caps) {
+      case true:
+        upperKeys[i].innerHTML = libUpper[i];
+        break;
+      default:
+        upperKeys[i].innerHTML = libLow[i];
+    }
+  }
+}
 
-const row4 = [
-  { mainFunc: 'Shift', class: 'shift-left' },
-  { main: 'я', secondary: '' },
-  { main: 'ч', secondary: '' },
-  { main: 'с', secondary: '' },
-  { main: 'м', secondary: '' },
-  { main: 'и', secondary: '' },
-  { main: 'т', secondary: '' },
-  { main: 'ь', secondary: '' },
-  { main: 'б', secondary: '' },
-  { main: 'ю', secondary: '' },
-  { main: '.', secondary: ',' },
-  { mainFunc: 'Shift', class: 'shift-right' },
-  { mainFunc: '&uarr;', class: 'up' },
-];
+function shiftSwitch(lib, libShift, keys, position) {
+  const upperKeys = keys;
+  for (let i = 0; i < lib.length; (i += 1)) {
+    switch (position) {
+      case true:
+        upperKeys[i].innerHTML = libShift[i];
+        break;
+      default:
+        upperKeys[i].innerHTML = lib[i];
+    }
+  }
+}
 
-const row5 = [
-  { mainFunc: 'Ctrl', class: 'ctrl-left' },
-  { mainFunc: 'Win', class: 'win' },
-  { mainFunc: 'Alt', class: 'alt-left' },
-  { mainFunc: '&mdash;', class: 'space' },
-  { mainFunc: 'Alt', class: 'alt-right' },
-  { mainFunc: 'Ctrl', class: 'ctrl-right' },
-  { mainFunc: '&larr;', class: 'left' },
-  { mainFunc: '&darr;', class: 'down' },
-  { mainFunc: '&rarr;', class: 'right' },
-];
 
-const arrayOfRows = [row1, row2, row3, row4, row5];
-
-// создание базовой структуры
+// create basic structure
 
 const virtualKeyboard = document.createElement('div');
+const textArea = document.createElement('textarea');
+const keysArea = document.createElement('div');
 
 virtualKeyboard.className = 'virtual-keyboard';
-virtualKeyboard.insertAdjacentHTML('afterbegin', '<textarea></textarea>');
-
-document.body.append(virtualKeyboard);
-
-const keysArea = document.createElement('div');
 keysArea.className = 'keys-area';
 
+document.body.append(virtualKeyboard);
+virtualKeyboard.append(textArea);
 virtualKeyboard.append(keysArea);
 
-createRows(arrayOfRows, keysArea);
+createKeys(idKeys, keysArea);
+
+
+const keysAll = keysArea.querySelectorAll('.key');
+const keys = keysArea.querySelectorAll('div[class=key]');
+const keysFunc = keysArea.querySelectorAll('.func');
+
+addLetter(rusLow, keysAll);
+
+// Add event to keys
+
+let caps = false;
+
+document.addEventListener('keydown', (event) => { // add class 'active' to keydown
+  keys.forEach((key) => {
+    if (key.getAttribute('id') === event.code) {
+      event.preventDefault();
+      key.classList.add('active');
+      addLetterToInput(textArea, key.innerHTML);
+    }
+  });
+
+  keysFunc.forEach((keyF) => {
+    if (keyF.getAttribute('id') === event.code) {
+      keyF.classList.add('active');
+      switch (event.code) {
+        case 'Tab':
+          event.preventDefault();
+          break;
+        case 'CapsLock':
+          caps = !caps;
+          capsSwitch(rusLow, rusUpper, keysAll, caps);
+          if (!caps) {
+            capsSwitch(rusLow, rusUpper, keysAll, caps);
+            keyF.classList.remove('active');
+            break;
+          } else break;
+        case 'ShiftLeft':
+        case 'ShiftRight':
+          if (caps) shiftSwitch(rusUpper, rusShift, keysAll, true);
+          else shiftSwitch(rusLow, rusShift, keysAll, true);
+          break;
+        default:
+          keyF.classList.add('active');
+      }
+    }
+  });
+});
+
+document.addEventListener('keyup', (event) => { // remove class 'active' to keydown
+  keys.forEach((key) => {
+    if (key.getAttribute('id') === event.code) {
+      key.classList.remove('active');
+    }
+  });
+
+  keysFunc.forEach((keyF) => {
+    if (keyF.getAttribute('id') === event.code) {
+      switch (event.code) {
+        case 'CapsLock':
+          if (!caps) {
+            keyF.classList.remove('active');
+            break;
+          } else break;
+        case 'ShiftLeft':
+        case 'ShiftRight':
+          keyF.classList.remove('active');
+          if (!caps) shiftSwitch(rusLow, rusShift, keysAll, false);
+          else shiftSwitch(rusLow, rusShift, keysAll, false);
+          break;
+        default:
+          keyF.classList.remove('active');
+      }
+    }
+  });
+});
+
+// add events to virtual keys
+
+keysArea.addEventListener('mousedown', (event) => {
+  if (/^key$/.test(event.target.getAttribute('class'))) {
+    addLetterToInput(textArea, event.target.innerHTML);
+  } else {
+    switch (event.target.getAttribute('id')) {
+      case 'Tab':
+        addLetterToInput(textArea, '   ');
+        break;
+
+      case 'ShiftLeft':
+      case 'ShiftRight':
+        shiftSwitch(rusUpper, rusShift, keysAll, true);
+        event.target.addEventListener('mouseup', () => {
+          if (caps === true) shiftSwitch(rusUpper, rusShift, keysAll, false);
+          else shiftSwitch(rusLow, rusShift, keysAll, false);
+        });
+        break;
+
+      case 'CapsLock':
+        caps = !caps;
+        capsSwitch(rusLow, rusUpper, keysAll, caps);
+        if (caps === true) {
+          capsSwitch(rusLow, rusUpper, keysAll, caps);
+          event.target.classList.add('active');
+          break;
+        } else {
+          event.target.classList.remove('active');
+          break;
+        }
+      default:
+        break;
+    }
+  }
+});

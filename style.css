@@ -90,6 +90,10 @@ div.keys-area {
   width: 13%;
 }
 
+.caps-active {
+  text-transform: uppercase;
+}
+
 .enter {
   width: 13.4%;
 }
@@ -129,4 +133,14 @@ div.keys-area {
 
 .key:active {
   filter: invert(100%);
+}
+
+.key.active {
+  filter: invert(100%);
+  transition-duration: 0.1s;
+  box-shadow: 0 0 5px 1px #000000;
+}
+
+textarea:focus {
+  outline: none;
 }
