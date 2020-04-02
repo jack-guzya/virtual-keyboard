@@ -79,10 +79,17 @@ document.addEventListener('keydown', (event) => { // add class 'active' to keydo
   keysFunc.forEach((keyF) => {
     if (keyF.getAttribute('id') === event.code) {
       keyF.classList.add('active');
+      event.preventDefault();
+
       switch (event.code) {
         case 'Tab':
-          event.preventDefault();
+          addLetterToInput(textArea, '   ');
           break;
+
+        case 'Space':
+        addLetterToInput(textArea, ' ');
+        break;
+
         case 'CapsLock':
           caps = !caps;
           capsSwitch(rusLow, rusUpper, keysAll, caps);
@@ -91,13 +98,43 @@ document.addEventListener('keydown', (event) => { // add class 'active' to keydo
             keyF.classList.remove('active');
             break;
           } else break;
+
         case 'ShiftLeft':
         case 'ShiftRight':
           if (caps) shiftSwitch(rusUpper, rusShift, keysAll, true);
           else shiftSwitch(rusLow, rusShift, keysAll, true);
           break;
+
+        case 'ArrowUp':
+          addLetterToInput(textArea, '↑');
+          break;
+
+        case 'ArrowLeft':
+          textArea.selectionStart -= 1;
+          textArea.selectionEnd -= 1;
+          textArea.focus();
+          break;
+
+        case 'ArrowDown':
+          addLetterToInput(textArea, '↓');
+          break;
+
+        case 'ArrowRight':
+          textArea.selectionStart += 1;
+          break;
+
+        case 'Backspace':
+          textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
+          break;
+
+        case 'Delete':
+        textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
+        break;
+
+        case 'Enter':
+          addLetterToInput(textArea, '\n');
         default:
-          keyF.classList.add('active');
+          break;
       }
     }
   });
@@ -162,8 +199,45 @@ keysArea.addEventListener('mousedown', (event) => {
           event.target.classList.remove('active');
           break;
         }
+
+      case 'Space':
+        addLetterToInput(textArea, ' ');
+        break;
+
+      case 'ArrowUp':
+        addLetterToInput(textArea, '↑');
+        break;
+
+      case 'ArrowLeft':
+        textArea.selectionStart -= 1;
+        textArea.selectionEnd -= 1;
+        break;
+
+      case 'ArrowDown':
+        addLetterToInput(textArea, '↓');
+        break;
+
+      case 'ArrowRight':
+        textArea.selectionStart += 1;
+        break;
+
+      case 'Backspace':
+        textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
+        break;
+
+      case 'Delete':
+        textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
+        break;
+
+      case 'Enter':
+        addLetterToInput(textArea, '\n');
+
       default:
         break;
     }
   }
+});
+
+keysArea.addEventListener('mouseup', () => {
+  textArea.focus();
 });
