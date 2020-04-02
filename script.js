@@ -1,49 +1,14 @@
 import idKeys from './keys.js';
-import createKeys from './creating-keys.js';
-import { rusLow, rusUpper, rusShift } from './languages.js';
+import {
+  createKeys, addLetterToInput, addLetter, capsSwitch, shiftSwitch,
+} from './creating-keys.js';
+import {
+  rusLow, rusUpper, rusShift, enLow, enUpper, enShift,
+} from './languages.js';
 
-if (sessionStorage.getItem('language') === null && sessionStorage.getItem('caps') === null) {
-  sessionStorage.setItem('language', 'ru');
-  sessionStorage.setItem('caps', false);
+if (sessionStorage.getItem('lang') === null) {
+  sessionStorage.setItem('lang', 'ru');
 }
-
-function addLetterToInput(input, letter) {
-  input.setRangeText(letter, input.selectionStart, input.selectionEnd, 'end');
-  input.focus();
-}
-
-function addLetter(lib, keys) {
-  for (let i = 0; i < lib.length; (i += 1)) {
-    keys[i].insertAdjacentHTML('afterbegin', lib[i]);
-  }
-}
-
-function capsSwitch(libLow, libUpper, keys, caps) {
-  const upperKeys = keys;
-  for (let i = 0; i < libLow.length; (i += 1)) {
-    switch (caps) {
-      case true:
-        upperKeys[i].innerHTML = libUpper[i];
-        break;
-      default:
-        upperKeys[i].innerHTML = libLow[i];
-    }
-  }
-}
-
-function shiftSwitch(lib, libShift, keys, position) {
-  const upperKeys = keys;
-  for (let i = 0; i < lib.length; (i += 1)) {
-    switch (position) {
-      case true:
-        upperKeys[i].innerHTML = libShift[i];
-        break;
-      default:
-        upperKeys[i].innerHTML = lib[i];
-    }
-  }
-}
-
 
 // create basic structure
 
@@ -69,10 +34,9 @@ addLetter(rusLow, keysAll);
 
 // Add event to keys
 
-let caps;
+let caps = false;
 
 document.addEventListener('keydown', (event) => { // add class 'active' to keydown
-
   keys.forEach((key) => {
     if (key.getAttribute('id') === event.code) {
       event.preventDefault();
@@ -96,22 +60,16 @@ document.addEventListener('keydown', (event) => { // add class 'active' to keydo
           break;
 
         case 'CapsLock':
-          sessionStorage.setItem('caps', !sessionStorage.getItem('caps'));
-
-          if (sessionStorage.getItem('caps') === true) {
-            capsSwitch(rusLow, rusUpper, keysAll, caps);
-          }
-          capsSwitch(rusLow, rusUpper, keysAll, caps);
-          if (!caps) {
-            capsSwitch(rusLow, rusUpper, keysAll, caps);
+          caps = !caps;
+          capsSwitch(sessionStorage.lang, keysAll, caps);
+          if (caps === false) {
             keyF.classList.remove('active');
-            break;
-          } else break;
+          }
+          break;
 
         case 'ShiftLeft':
         case 'ShiftRight':
-          if (caps) shiftSwitch(rusUpper, rusShift, keysAll, true);
-          else shiftSwitch(rusLow, rusShift, keysAll, true);
+          shiftSwitch(sessionStorage.lang, keysAll, true, caps);
           break;
 
         case 'ArrowUp':
@@ -170,12 +128,13 @@ document.addEventListener('keyup', (event) => { // remove class 'active' to keyd
             keyF.classList.remove('active');
             break;
           } else break;
+
         case 'ShiftLeft':
         case 'ShiftRight':
           keyF.classList.remove('active');
-          if (!caps) shiftSwitch(rusLow, rusShift, keysAll, false);
-          else shiftSwitch(rusLow, rusShift, keysAll, false);
+          shiftSwitch(sessionStorage.lang, keysAll, false, caps);
           break;
+
         default:
           keyF.classList.remove('active');
       }
