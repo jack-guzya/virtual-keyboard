@@ -2,13 +2,14 @@ import idKeys from './keys.js';
 import {
   createKeys, addLetterToInput, addLetter, capsSwitch, shiftSwitch,
 } from './creating-keys.js';
-import {
-  rusLow, rusUpper, rusShift, enLow, enUpper, enShift,
-} from './languages.js';
+
+// create session storage
 
 if (sessionStorage.getItem('lang') === null) {
   sessionStorage.setItem('lang', 'ru');
 }
+
+let caps = false;
 
 // create basic structure
 
@@ -30,22 +31,21 @@ const keysAll = keysArea.querySelectorAll('.key');
 const keys = keysArea.querySelectorAll('div[class=key]');
 const keysFunc = keysArea.querySelectorAll('.func');
 
-addLetter(rusLow, keysAll);
+addLetter(sessionStorage.lang, keysAll, caps);
 
 // Add event to keys
 
-let caps = false;
-
-document.addEventListener('keydown', (event) => { // add class 'active' to keydown
-  keys.forEach((key) => {
+document.addEventListener('keydown', (event) => {
+  keys.forEach((key) => { // add action to keys
     if (key.getAttribute('id') === event.code) {
       event.preventDefault();
+
       key.classList.add('active');
       addLetterToInput(textArea, key.innerHTML);
     }
   });
 
-  keysFunc.forEach((keyF) => {
+  keysFunc.forEach((keyF) => { // add action to function keys
     if (keyF.getAttribute('id') === event.code) {
       keyF.classList.add('active');
       event.preventDefault();
@@ -106,21 +106,25 @@ document.addEventListener('keydown', (event) => { // add class 'active' to keydo
     }
   });
 
-  if (event.shiftKey && event.altKey) {
-    if (sessionStorage.getItem('language') === 'ru') {
-      sessionStorage.setItem('language', 'en');
-    } else sessionStorage.setItem('language', 'ru');
+  if (event.shiftKey && event.altKey) { // switch language
+    if (sessionStorage.getItem('lang') === 'ru') {
+      sessionStorage.setItem('lang', 'en');
+      addLetter(sessionStorage.lang, keysAll, caps);
+    } else {
+      sessionStorage.setItem('lang', 'ru');
+      addLetter(sessionStorage.lang, keysAll, caps);
+    }
   }
 });
 
-document.addEventListener('keyup', (event) => { // remove class 'active' to keydown
-  keys.forEach((key) => {
+document.addEventListener('keyup', (event) => {
+  keys.forEach((key) => { // add action to keys when committed keyup event
     if (key.getAttribute('id') === event.code) {
       key.classList.remove('active');
     }
   });
 
-  keysFunc.forEach((keyF) => {
+  keysFunc.forEach((keyF) => { // add action to function keys when committed keyup event
     if (keyF.getAttribute('id') === event.code) {
       switch (event.code) {
         case 'CapsLock':
@@ -146,8 +150,8 @@ document.addEventListener('keyup', (event) => { // remove class 'active' to keyd
 
 keysArea.addEventListener('mousedown', (event) => {
   if (/^key$/.test(event.target.getAttribute('class'))) {
-    addLetterToInput(textArea, event.target.innerHTML);
-  } else {
+    addLetterToInput(textArea, event.target.innerHTML); // add events to virtual keys
+  } else { // add events to virtual  function keys
     switch (event.target.getAttribute('id')) {
       case 'Tab':
         addLetterToInput(textArea, '   ');
@@ -155,24 +159,20 @@ keysArea.addEventListener('mousedown', (event) => {
 
       case 'ShiftLeft':
       case 'ShiftRight':
-        shiftSwitch(rusUpper, rusShift, keysAll, true);
+        shiftSwitch(sessionStorage.lang, keysAll, true, caps);
         event.target.addEventListener('mouseup', () => {
-          if (caps === true) shiftSwitch(rusUpper, rusShift, keysAll, false);
-          else shiftSwitch(rusLow, rusShift, keysAll, false);
+          shiftSwitch(sessionStorage.lang, keysAll, false, caps);
         });
         break;
 
       case 'CapsLock':
         caps = !caps;
-        capsSwitch(rusLow, rusUpper, keysAll, caps);
-        if (caps === true) {
-          capsSwitch(rusLow, rusUpper, keysAll, caps);
-          event.target.classList.add('active');
-          break;
-        } else {
+        event.target.classList.add('active');
+        capsSwitch(sessionStorage.lang, keysAll, caps);
+        if (caps === false) {
           event.target.classList.remove('active');
-          break;
         }
+        break;
 
       case 'Space':
         addLetterToInput(textArea, ' ');
@@ -211,6 +211,6 @@ keysArea.addEventListener('mousedown', (event) => {
   }
 });
 
-keysArea.addEventListener('mouseup', () => {
+keysArea.addEventListener('mouseup', () => { // add focus to textarea when committed mouseup event
   textArea.focus();
 });
