@@ -2,11 +2,15 @@ import idKeys from './keys.js';
 import createKeys from './creating-keys.js';
 import { rusLow, rusUpper, rusShift } from './languages.js';
 
+if (sessionStorage.getItem('language') === null && sessionStorage.getItem('caps') === null) {
+  sessionStorage.setItem('language', 'ru');
+  sessionStorage.setItem('caps', false);
+}
+
 function addLetterToInput(input, letter) {
   input.setRangeText(letter, input.selectionStart, input.selectionEnd, 'end');
   input.focus();
 }
-
 
 function addLetter(lib, keys) {
   for (let i = 0; i < lib.length; (i += 1)) {
@@ -65,9 +69,10 @@ addLetter(rusLow, keysAll);
 
 // Add event to keys
 
-let caps = false;
+let caps;
 
 document.addEventListener('keydown', (event) => { // add class 'active' to keydown
+
   keys.forEach((key) => {
     if (key.getAttribute('id') === event.code) {
       event.preventDefault();
@@ -87,11 +92,15 @@ document.addEventListener('keydown', (event) => { // add class 'active' to keydo
           break;
 
         case 'Space':
-        addLetterToInput(textArea, ' ');
-        break;
+          addLetterToInput(textArea, ' ');
+          break;
 
         case 'CapsLock':
-          caps = !caps;
+          sessionStorage.setItem('caps', !sessionStorage.getItem('caps'));
+
+          if (sessionStorage.getItem('caps') === true) {
+            capsSwitch(rusLow, rusUpper, keysAll, caps);
+          }
           capsSwitch(rusLow, rusUpper, keysAll, caps);
           if (!caps) {
             capsSwitch(rusLow, rusUpper, keysAll, caps);
@@ -128,16 +137,22 @@ document.addEventListener('keydown', (event) => { // add class 'active' to keydo
           break;
 
         case 'Delete':
-        textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
-        break;
+          textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
+          break;
 
         case 'Enter':
           addLetterToInput(textArea, '\n');
-        default:
           break;
+        default:
       }
     }
   });
+
+  if (event.shiftKey && event.altKey) {
+    if (sessionStorage.getItem('language') === 'ru') {
+      sessionStorage.setItem('language', 'en');
+    } else sessionStorage.setItem('language', 'ru');
+  }
 });
 
 document.addEventListener('keyup', (event) => { // remove class 'active' to keydown
@@ -231,9 +246,8 @@ keysArea.addEventListener('mousedown', (event) => {
 
       case 'Enter':
         addLetterToInput(textArea, '\n');
-
-      default:
         break;
+      default:
     }
   }
 });
