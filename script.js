@@ -33,6 +33,78 @@ const keysFunc = keysArea.querySelectorAll('.func');
 
 addLetter(sessionStorage.lang, keysAll, caps);
 
+// create info blocks
+
+const callInfo = document.createElement('div');
+const callInfoDescription = document.createElement('p');
+
+keysAll[60].classList.add('pulse'); // add pulse effect to ctrl right when call-info is active
+
+callInfo.className = 'call-info';
+callInfoDescription.className = 'call-info__description';
+
+const info = document.createElement('div');
+const osInfo = document.createElement('p');
+const langSwitchInfo = document.createElement('p');
+
+info.className = 'info';
+info.classList.add('hide');
+osInfo.className = 'info__os';
+langSwitchInfo.className = 'info__lang-switch';
+
+const langInfo = document.createElement('div');
+langInfo.className = 'lang-info';
+langInfo.classList.add('hide');
+
+document.body.append(langInfo);
+
+virtualKeyboard.append(callInfo);
+callInfo.append(callInfoDescription);
+
+
+virtualKeyboard.append(info);
+info.append(osInfo);
+info.append(langSwitchInfo);
+
+osInfo.innerHTML = 'Клавиатура разработана под управлением операционной системы Windows';
+langSwitchInfo.innerHTML = 'Для переключения языка нажмите Alt+Shift на физической или Alt Left на виртуальной клавиатуре';
+
+callInfoDescription.innerHTML = 'Для вызова справки нажмите Ctrl Right';
+
+langInfo.innerHTML = sessionStorage.getItem('lang'); // change showing language info block after restart page
+
+
+callInfo.addEventListener('animationend', () => {
+  callInfo.classList.add('hide');
+  keysAll[60].classList.remove('pulse'); // remove pulse effect
+});
+
+info.addEventListener('animationend', () => {
+  info.classList.add('hide');
+  keysAll[57].classList.remove('pulse'); // remove pulse effect
+  keysAll[42].classList.remove('pulse');
+});
+
+// create lang switch function
+
+function langSwitch() {
+  if (sessionStorage.getItem('lang') === 'ru') {
+    sessionStorage.setItem('lang', 'en');
+    addLetter(sessionStorage.lang, keysAll, caps);
+    langInfo.innerHTML = sessionStorage.getItem('lang');
+    langInfo.classList.remove('hide');
+  } else {
+    sessionStorage.setItem('lang', 'ru');
+    addLetter(sessionStorage.lang, keysAll, caps);
+    langInfo.innerHTML = sessionStorage.getItem('lang');
+    langInfo.classList.remove('hide');
+  }
+}
+
+langInfo.addEventListener('animationend', () => {
+  langInfo.classList.add('hide');
+});
+
 // Add event to keys
 
 document.addEventListener('keydown', (event) => {
@@ -91,7 +163,9 @@ document.addEventListener('keydown', (event) => {
           break;
 
         case 'Backspace':
-          textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
+          if (textArea.selectionStart === 0) {
+            break;
+          } else textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
           break;
 
         case 'Delete':
@@ -101,19 +175,28 @@ document.addEventListener('keydown', (event) => {
         case 'Enter':
           addLetterToInput(textArea, '\n');
           break;
+
+        case 'ControlRight':
+          if (callInfo.getAttribute('class') === 'call-info') {
+            break;
+          } else {
+            info.classList.remove('hide');
+            keysAll[57].classList.add('pulse'); // add pulse effect
+            keysAll[42].classList.add('pulse'); // add pulse effect to Shift
+          }
+          break;
+
         default:
       }
     }
   });
 
+  info.addEventListener('animationend', () => {
+    info.classList.add('hide');
+  });
+
   if (event.shiftKey && event.altKey) { // switch language
-    if (sessionStorage.getItem('lang') === 'ru') {
-      sessionStorage.setItem('lang', 'en');
-      addLetter(sessionStorage.lang, keysAll, caps);
-    } else {
-      sessionStorage.setItem('lang', 'ru');
-      addLetter(sessionStorage.lang, keysAll, caps);
-    }
+    langSwitch();
   }
 });
 
@@ -196,7 +279,9 @@ keysArea.addEventListener('mousedown', (event) => {
         break;
 
       case 'Backspace':
-        textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
+        if (textArea.selectionStart === 0) {
+          break;
+        } else textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
         break;
 
       case 'Delete':
@@ -206,6 +291,21 @@ keysArea.addEventListener('mousedown', (event) => {
       case 'Enter':
         addLetterToInput(textArea, '\n');
         break;
+
+      case 'ControlRight':
+        if (callInfo.getAttribute('class') === 'call-info') {
+          break;
+        } else {
+          info.classList.remove('hide');
+          keysAll[57].classList.add('pulse'); // add pulse effect to Alt
+          keysAll[42].classList.add('pulse'); // add pulse effect to Shift
+        }
+        break;
+
+      case 'AltLeft':
+        langSwitch();
+        break;
+
       default:
     }
   }
