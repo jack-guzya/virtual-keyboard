@@ -72,13 +72,13 @@ function capsSwitch(lang, keys, caps) { // switch letters when press caps_lock
   }
 }
 
-function shiftSwitch(lang, keys, position, caps) { // switch letters when press shift
+function shiftSwitch(lang, keys, shiftActive, caps) { // switch letters when press shift
   const upperKeys = keys;
   for (let i = 0; i < rusLow.length; (i += 1)) {
     switch (lang) {
       case 'ru':
 
-        switch (position) {
+        switch (shiftActive) {
           case true:
             upperKeys[i].innerHTML = rusShift[i];
             break;
@@ -91,7 +91,7 @@ function shiftSwitch(lang, keys, position, caps) { // switch letters when press 
         break;
 
       default:
-        switch (position) {
+        switch (shiftActive) {
           case true:
             upperKeys[i].innerHTML = enShift[i];
             break;
