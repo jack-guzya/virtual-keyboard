@@ -12,17 +12,6 @@ body {
   animation-duration: 1.5s;
 }
 
-/* @keyframes bg {
-  from {
-    background-color: #ffffff;
-    opacity: 0;
-  }
-  to {
-    background-color: #8a8a8a;
-    opacity: 1;
-  }
-} */
-
 p {
   display: inline-block;
 }
@@ -55,7 +44,10 @@ div.keys-area {
 }
 
 .info,
-.call-info {
+.call-info,
+.info__navigation,
+.info__error,
+.info__great-mind {
   position: absolute;
   left: 205px;
   margin: 40px auto 0;
@@ -66,7 +58,7 @@ div.keys-area {
   border-radius: 10px;
   background-color: #8a8a8ace;
   width: 600px;
-  height: 70px;
+  height: 60px;
   color: #ffffff;
 }
 
@@ -104,7 +96,10 @@ div.keys-area {
   }
 }
 
-.info {
+.info,
+.info__navigation,
+.info__error,
+.info__great-mind {
   height: 100px;
   opacity: 0;
   animation-name: info;
@@ -128,6 +123,17 @@ div.keys-area {
     opacity: 0;
     top: 70vh;
   }
+}
+
+.info__error,
+.info__navigation {
+  height: 30px;
+  line-height: 30px;
+}
+
+.info__great-mind {
+  height: 65px;
+  animation-duration: 7s;
 }
 
 .hide {
@@ -330,5 +336,21 @@ textarea:focus {
   }
   100% {
     box-shadow: inset 0 0 12px 1px #04e5f5;
+  }
+}
+
+.pulse_great-mind {
+  animation-name: great-mind;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes great-mind {
+  0% {
+    box-shadow: inset 0 0 3px 1px #f50404;
+  }
+  100% {
+    box-shadow: inset 0 0 12px 1px #f50404;
   }
 }
