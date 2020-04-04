@@ -1,0 +1,356 @@
+* {
+  margin: 0;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  background-color: #000000;
+  background-image: url("images/Hollowed-Boxes.svg");
+  background-size: contain;
+  animation-name: bg;
+  animation-duration: 1.5s;
+}
+
+p {
+  display: inline-block;
+}
+
+.virtual-keyboard {
+  position: relative;
+  width: 1020px;
+  margin: 10px auto;
+}
+
+textarea {
+  padding: 12px;
+  box-sizing: border-box;
+  color: #ffffff;
+  width: 100%;
+  height: 20vh;
+  background-color: rgb(63, 63, 63);
+}
+
+div.keys-area {
+  user-select: none;
+  background-color: rgb(100, 100, 100);
+  border-radius: 8px;
+  border: rgb(199, 199, 199) solid 3px;
+  padding: 5px;
+}
+
+.row {
+  margin-bottom: 0.8%;
+}
+
+.info,
+.call-info,
+.info__navigation,
+.info__error,
+.info__great-mind {
+  position: absolute;
+  left: 205px;
+  margin: 40px auto 0;
+  padding: 5px 9px 10px;
+  text-align: center;
+  letter-spacing: 1.5px;
+  border: 1px solid rgba(255, 255, 255, 0.788);
+  border-radius: 10px;
+  background-color: #8a8a8ace;
+  width: 600px;
+  height: 60px;
+  color: #ffffff;
+}
+
+.call-info {
+  opacity: 0;
+  animation-name: call-info;
+  animation-duration: 5s;
+  animation-delay: 1s;
+}
+
+@keyframes call-info {
+  0% {
+    opacity: 0;
+    top: 75vh;
+  }
+  7% {
+    opacity: 1;
+    top: 70vh;
+  }
+  20% {
+    opacity: 1;
+    top: 70vh;
+  }
+  50% {
+    opacity: 1;
+    top: 70vh;
+  }
+  95% {
+    opacity: 1;
+    top: 70vh;
+  }
+  100% {
+    opacity: 0;
+    top: 75vh;
+  }
+}
+
+.info,
+.info__navigation,
+.info__error,
+.info__great-mind {
+  height: 100px;
+  opacity: 0;
+  animation-name: info;
+  animation-duration: 5s;
+}
+
+@keyframes info {
+  0% {
+    opacity: 0;
+    top: 70vh;
+  }
+  8% {
+    opacity: 1;
+    top: 65vh;
+  }
+  95% {
+    opacity: 1;
+    top: 65vh;
+  }
+  100% {
+    opacity: 0;
+    top: 70vh;
+  }
+}
+
+.info__error,
+.info__navigation {
+  height: 30px;
+  line-height: 30px;
+}
+
+.info__great-mind {
+  height: 65px;
+  animation-duration: 7s;
+}
+
+.hide {
+  display: none;
+}
+
+.info p {
+  margin-top: 6px;
+}
+
+.info__os {
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.301);
+}
+
+.call-info__description {
+  margin-top: 20px;
+}
+
+.lang-info {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.301);
+  border-radius: 10px;
+  width: 100px;
+  height: 100px;
+  top: 75vh;
+  left: 80vw;
+  background-color: #8a8a8ace;
+  color: #ffffff75;
+  text-transform: uppercase;
+  line-height: 95px;
+  font-size: 60px;
+  text-align: center;
+  animation: switch 2s linear 0s 1 normal none running;
+  opacity: 0;
+}
+
+@keyframes switch {
+  0% {
+    top: 80vh;
+    opacity: 0;
+  }
+  10% {
+    top: 75vh;
+    opacity: 1;
+  }
+  90% {
+    top: 75vh;
+    opacity: 1;
+  }
+  100% {
+    top: 80vh;
+    opacity: 0;
+  }
+}
+
+/*-----------------------first-row-------------------------------*/
+
+.key {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  user-select: none;
+  line-height: 60px;
+  width: 6%;
+  height: 60px;
+  margin: 2.9px;
+  background-color: rgb(212, 212, 212);
+  border-radius: 8px;
+  color: #000000;
+}
+
+.func {
+  background-color: rgb(63, 63, 63);
+  color: #ccc;
+}
+
+.backspace {
+  width: 13.8%;
+}
+
+/*-----------------------second-row-------------------------------*/
+
+.tab {
+  width: 7%;
+}
+
+.tab .main-letter {
+  left: 28%;
+}
+
+/*-----------------------third-row-------------------------------*/
+
+.caps {
+  width: 13%;
+}
+
+.caps-active {
+  text-transform: uppercase;
+}
+
+.enter {
+  width: 13.4%;
+}
+
+/*-----------------------fourth-row-------------------------------*/
+
+.shift-left,
+.shift-right {
+  width: 13.2%;
+}
+
+/*-----------------------fifth-row-------------------------------*/
+
+.ctrl-left,
+.ctrl-right,
+.alt-left,
+.alt-right {
+  width: 8%;
+}
+
+.space {
+  width: 38.8%;
+}
+
+/*----------------------animation------------------------------*/
+
+.key:hover {
+  cursor: pointer;
+  box-shadow: 0 0 1px 1px #04e5f5;
+  transition-duration: 0.2s;
+}
+
+.key.func:hover {
+  box-shadow: 0 0 1px 1px #ccc;
+}
+
+.key:active {
+  animation-name: key;
+  animation-duration: 0.3s;
+  filter: invert(100%);
+  box-shadow: 0 0 2px 2px #000000;
+}
+
+.key.active {
+  animation-name: key;
+  animation-duration: 0.3s;
+  filter: invert(100%);
+  transition-duration: 0.1s;
+  box-shadow: 0 0 2px 2px #000000;
+}
+
+.key.func.active {
+  animation-name: key-func;
+  background-color: rgb(0, 0, 0);
+  box-shadow: 0 0 0px 0px #000000;
+}
+
+@keyframes key {
+  from {
+    box-shadow: inset 0 0 3px 3px #000000;
+    filter: invert(100%);
+  }
+  to {
+    box-shadow: inset 0 0 0px 0px #000000;
+    filter: invert(0%);
+  }
+}
+
+@keyframes key-func {
+  from {
+    box-shadow: inset 0 0 5px 3px #ffffff;
+    filter: invert(100%);
+  }
+  to {
+    box-shadow: inset 0 0 0px 0px #ffffff;
+    filter: invert(0%);
+  }
+}
+
+textarea:focus {
+  outline: none;
+}
+
+.pulse {
+  animation-name: pulse;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+.ctrl-right.pulse {
+  animation-delay: 2s;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: inset 0 0 3px 1px #04e5f5;
+  }
+  100% {
+    box-shadow: inset 0 0 12px 1px #04e5f5;
+  }
+}
+
+.pulse_great-mind {
+  animation-name: great-mind;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes great-mind {
+  0% {
+    box-shadow: inset 0 0 3px 1px #f50404;
+  }
+  100% {
+    box-shadow: inset 0 0 12px 1px #f50404;
+  }
+}
