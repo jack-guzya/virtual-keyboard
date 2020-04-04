@@ -10,7 +10,8 @@ if (sessionStorage.getItem('lang') === null) {
 }
 
 let caps = false;
-let infoBlocks = false;
+let shift = false;
+let infoBlocks = true;
 
 // create basic structure
 
@@ -57,6 +58,10 @@ const langInfo = document.createElement('div'); // language info block (ru/en)
 langInfo.className = 'lang-info';
 langInfo.classList.add('hide');
 
+const shiftInfo = document.createElement('div'); // shift info block
+shiftInfo.className = 'info__shift';
+shiftInfo.classList.add('hide');
+
 const navigationInfo = document.createElement('div'); // navigation info block ([←] & [→])
 navigationInfo.className = 'info__navigation';
 navigationInfo.classList.add('hide');
@@ -79,6 +84,8 @@ virtualKeyboard.append(info);
 info.append(osInfo);
 info.append(langSwitchInfo);
 
+virtualKeyboard.append(shiftInfo);
+
 virtualKeyboard.append(navigationInfo);
 
 virtualKeyboard.append(errorInfo);
@@ -90,9 +97,11 @@ langSwitchInfo.innerHTML = 'Для переключения языка нажм�
 
 callInfoDescription.innerHTML = 'Для вызова справки нажмите Ctrl Right';
 
+shiftInfo.innerHTML = 'Клавиша Shift Left зажимается на виртуальной клавиатуре автоматически при клике мышкой. При зажатой клавише Shift Left клавиша Сapslock недоступна (она вам и не нужна при таком сценарии)';
+
 navigationInfo.innerHTML = 'Навигация по тексту осуществляется клавишами [←] и [→]';
 
-greatMind.innerHTML = 'Эти клавиши просто рисуют стрелки [↓] и [↑]. Не спрашивай меня, почему именно так - это задумка Великого разума, нам этого не постичь';
+greatMind.innerHTML = 'Эти клавиши просто рисуют стрелки [↓] и [↑]. Не спрашивайте меня, почему именно так - это задумка Великого разума, нам этого не постичь';
 
 errorInfo.innerHTML = 'Упс! Данная клавиша взяла трудовой отпуск';
 
@@ -102,13 +111,21 @@ langInfo.innerHTML = sessionStorage.getItem('lang'); // change showing language 
 callInfo.addEventListener('animationend', () => {
   callInfo.classList.add('hide');
   keysAll[60].classList.remove('pulse'); // remove pulse effect
+  infoBlocks = false;
 });
 
 info.addEventListener('animationend', () => {
   info.classList.add('hide');
   keysAll[57].classList.remove('pulse'); // remove pulse effect
-  keysAll[42].classList.remove('pulse');
+  keysAll[29].classList.add('pulse_great-mind');
+  shiftInfo.classList.remove('hide');
+});
+
+shiftInfo.addEventListener('animationend', () => {
+  shiftInfo.classList.add('hide');
   navigationInfo.classList.remove('hide');
+  keysAll[42].classList.remove('pulse'); // remove pulse effect (shift left)
+  keysAll[29].classList.remove('pulse_great-mind'); // remove pulse effect (caps lock)
   keysAll[63].classList.add('pulse'); // add pulse effect ([→])
   keysAll[61].classList.add('pulse'); // add pulse effect ([←])
 });
@@ -192,6 +209,7 @@ document.addEventListener('keydown', (event) => {
 
         case 'ShiftLeft':
         case 'ShiftRight':
+          shift = false;
           shiftSwitch(sessionStorage.lang, keysAll, true, caps);
           break;
 
@@ -270,7 +288,9 @@ document.addEventListener('keyup', (event) => {
 
         case 'ShiftLeft':
         case 'ShiftRight':
-          keyF.classList.remove('active');
+          shift = false;
+          keyF.classList.remove('active'); // shift right
+          keysAll[42].classList.remove('active'); // shift left
           shiftSwitch(sessionStorage.lang, keysAll, false, caps);
           break;
 
@@ -293,14 +313,29 @@ keysArea.addEventListener('mousedown', (event) => {
         break;
 
       case 'ShiftLeft':
+        shift = !shift;
+        event.target.classList.add('active');
+        shiftSwitch(sessionStorage.lang, keysAll, shift, caps);
+        if (shift === false) {
+          event.target.classList.remove('active');
+        }
+        break;
+
       case 'ShiftRight':
-        shiftSwitch(sessionStorage.lang, keysAll, true, caps);
-        event.target.addEventListener('mouseup', () => {
-          shiftSwitch(sessionStorage.lang, keysAll, false, caps);
-        });
+        if (shift === true) { // if shift left is active
+          break;
+        } else {
+          shiftSwitch(sessionStorage.lang, keysAll, true, caps);
+          event.target.addEventListener('mouseup', () => {
+            shiftSwitch(sessionStorage.lang, keysAll, false, caps);
+          });
+        }
         break;
 
       case 'CapsLock':
+        if (shift === true) { // if shift left is active
+          break;
+        }
         caps = !caps;
         event.target.classList.add('active');
         capsSwitch(sessionStorage.lang, keysAll, caps);
