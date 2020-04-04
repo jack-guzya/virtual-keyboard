@@ -1,7 +1,7 @@
-import idKeys from './keys.js';
+import idKeys from './javascript/keys.js';
 import {
   createKeys, addLetterToInput, addLetter, capsSwitch, shiftSwitch,
-} from './creating-keys.js';
+} from './javascript/creating-keys.js';
 
 // create session storage
 
