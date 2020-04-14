@@ -30,8 +30,6 @@ createKeys(idKeys, keysArea);
 
 
 const keysAll = keysArea.querySelectorAll('.key');
-const keys = keysArea.querySelectorAll('div[class=key]');
-const keysFunc = keysArea.querySelectorAll('.func');
 
 switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
 
@@ -188,90 +186,85 @@ langInfo.addEventListener('animationend', () => {
 // Add event to keys
 
 document.addEventListener('keydown', (event) => {
-  keys.forEach((key) => { // add action to keys
-    if (key.getAttribute('id') === event.code) {
-      event.preventDefault();
+  const keyTarget = document.getElementById(`${event.code}`);
+  event.preventDefault();
+  keyTarget.classList.add('active');
 
-      key.classList.add('active');
-      addLetterToInput(textArea, key.innerHTML);
-    }
-  });
+  switch (event.code) {
+    case 'Tab':
+      addLetterToInput(textArea, '   ');
+      break;
 
-  keysFunc.forEach((keyF) => { // add action to function keys
-    if (keyF.getAttribute('id') === event.code) {
-      keyF.classList.add('active');
-      event.preventDefault();
+    case 'Space':
+      addLetterToInput(textArea, ' ');
+      break;
 
-      switch (event.code) {
-        case 'Tab':
-          addLetterToInput(textArea, '   ');
-          break;
-
-        case 'Space':
-          addLetterToInput(textArea, ' ');
-          break;
-
-        case 'CapsLock':
-          caps = !caps;
-          switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
-          if (caps === false) {
-            keyF.classList.remove('active');
-          }
-          break;
-
-        case 'ShiftLeft':
-        case 'ShiftRight':
-          shift = true;
-          switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
-          break;
-
-        case 'ArrowUp':
-          addLetterToInput(textArea, '↑');
-          break;
-
-        case 'ArrowLeft':
-          textArea.selectionStart -= 1;
-          textArea.selectionEnd -= 1;
-          textArea.focus();
-          break;
-
-        case 'ArrowDown':
-          addLetterToInput(textArea, '↓');
-          break;
-
-        case 'ArrowRight':
-          textArea.selectionStart += 1;
-          break;
-
-        case 'Backspace':
-          if (textArea.selectionStart === 0) {
-            break;
-          } else textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
-          break;
-
-        case 'Delete':
-          textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
-          break;
-
-        case 'Enter':
-          addLetterToInput(textArea, '\n');
-          break;
-
-        case 'ControlRight':
-          if (infoBlocks === true) { // info blocks already running
-            break;
-          } else {
-            infoBlocks = true;
-            info.classList.remove('hide');
-            leftAltKey.classList.add('pulse'); // add pulse effect
-            shiftLeftKey.classList.add('pulse'); // add pulse effect to Shift
-          }
-          break;
-
-        default:
+    case 'CapsLock':
+      caps = !caps;
+      switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
+      if (caps === false) {
+        keyTarget.classList.remove('active');
       }
-    }
-  });
+      break;
+
+    case 'ShiftLeft':
+    case 'ShiftRight':
+      shift = true;
+      switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
+      break;
+
+    case 'ArrowUp':
+      addLetterToInput(textArea, '↑');
+      break;
+
+    case 'ArrowLeft':
+      textArea.selectionStart -= 1;
+      textArea.selectionEnd -= 1;
+      textArea.focus();
+      break;
+
+    case 'ArrowDown':
+      addLetterToInput(textArea, '↓');
+      break;
+
+    case 'ArrowRight':
+      textArea.selectionStart += 1;
+      break;
+
+    case 'Backspace':
+      if (textArea.selectionStart === 0) {
+        break;
+      } else textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
+      break;
+
+    case 'Delete':
+      textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
+      break;
+
+    case 'Enter':
+      addLetterToInput(textArea, '\n');
+      break;
+
+    case 'ControlRight':
+      if (infoBlocks === true) { // info blocks already running
+        break;
+      } else {
+        infoBlocks = true;
+        info.classList.remove('hide');
+        leftAltKey.classList.add('pulse'); // add pulse effect
+        shiftLeftKey.classList.add('pulse'); // add pulse effect to Shift
+      }
+      break;
+
+    case 'ControlLeft':
+    case 'MetaLeft':
+    case 'AltLeft':
+    case 'AltRight':
+      break;
+
+    default:
+      addLetterToInput(textArea, keyTarget.innerHTML);
+  }
 
   info.addEventListener('animationend', () => {
     info.classList.add('hide');
@@ -283,34 +276,26 @@ document.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('keyup', (event) => {
-  keys.forEach((key) => { // add action to keys when committed keyup event
-    if (key.getAttribute('id') === event.code) {
-      key.classList.remove('active');
-    }
-  });
+  const keyTarget = document.getElementById(`${event.code}`);
 
-  keysFunc.forEach((keyF) => { // add action to function keys when committed keyup event
-    if (keyF.getAttribute('id') === event.code) {
-      switch (event.code) {
-        case 'CapsLock':
-          if (!caps) {
-            keyF.classList.remove('active');
-            break;
-          } else break;
+  switch (event.code) {
+    case 'CapsLock':
+      if (!caps) {
+        keyTarget.classList.remove('active');
+        break;
+      } else break;
 
-        case 'ShiftLeft':
-        case 'ShiftRight':
-          shift = false;
-          keyF.classList.remove('active'); // shift right
-          shiftLeftKey.classList.remove('active'); // shift left
-          switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
-          break;
+    case 'ShiftLeft':
+    case 'ShiftRight':
+      shift = false;
+      keyTarget.classList.remove('active'); // shift right
+      shiftLeftKey.classList.remove('active'); // shift left
+      switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
+      break;
 
-        default:
-          keyF.classList.remove('active');
-      }
-    }
-  });
+    default:
+      keyTarget.classList.remove('active');
+  }
 });
 
 // add events to virtual keys
