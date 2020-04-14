@@ -1,12 +1,12 @@
 import idKeys from './javascript/keys.js';
 import {
-  createKeys, addLetterToInput, addLetter, capsSwitch, shiftSwitch,
+  createKeys, addLetterToInput, switchKeys,
 } from './javascript/creating-keys.js';
 
 // create session storage
 
 if (sessionStorage.getItem('lang') === null) {
-  sessionStorage.setItem('lang', 'ru');
+  sessionStorage.setItem('lang', 'RU');
 }
 
 let caps = false;
@@ -33,7 +33,7 @@ const keysAll = keysArea.querySelectorAll('.key');
 const keys = keysArea.querySelectorAll('div[class=key]');
 const keysFunc = keysArea.querySelectorAll('.func');
 
-addLetter(sessionStorage.lang, keysAll, caps);
+switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
 
 // create info blocks
 
@@ -156,14 +156,14 @@ errorInfo.addEventListener('animationend', () => {
 // create lang switch function
 
 function langSwitch() {
-  if (sessionStorage.getItem('lang') === 'ru') {
-    sessionStorage.setItem('lang', 'en');
-    addLetter(sessionStorage.lang, keysAll, caps);
+  if (sessionStorage.getItem('lang') === 'RU') {
+    sessionStorage.setItem('lang', 'EN');
+    switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
     langInfo.innerHTML = sessionStorage.getItem('lang');
     langInfo.classList.remove('hide');
   } else {
-    sessionStorage.setItem('lang', 'ru');
-    addLetter(sessionStorage.lang, keysAll, caps);
+    sessionStorage.setItem('lang', 'RU');
+    switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
     langInfo.innerHTML = sessionStorage.getItem('lang');
     langInfo.classList.remove('hide');
   }
@@ -201,7 +201,7 @@ document.addEventListener('keydown', (event) => {
 
         case 'CapsLock':
           caps = !caps;
-          capsSwitch(sessionStorage.lang, keysAll, caps);
+          switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
           if (caps === false) {
             keyF.classList.remove('active');
           }
@@ -209,8 +209,8 @@ document.addEventListener('keydown', (event) => {
 
         case 'ShiftLeft':
         case 'ShiftRight':
-          shift = false;
-          shiftSwitch(sessionStorage.lang, keysAll, true, caps);
+          shift = true;
+          switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
           break;
 
         case 'ArrowUp':
@@ -291,7 +291,7 @@ document.addEventListener('keyup', (event) => {
           shift = false;
           keyF.classList.remove('active'); // shift right
           keysAll[42].classList.remove('active'); // shift left
-          shiftSwitch(sessionStorage.lang, keysAll, false, caps);
+          switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
           break;
 
         default:
@@ -315,7 +315,7 @@ keysArea.addEventListener('mousedown', (event) => {
       case 'ShiftLeft':
         shift = !shift;
         event.target.classList.add('active');
-        shiftSwitch(sessionStorage.lang, keysAll, shift, caps);
+        switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
         if (shift === false) {
           event.target.classList.remove('active');
         }
@@ -325,9 +325,9 @@ keysArea.addEventListener('mousedown', (event) => {
         if (shift === true) { // if shift left is active
           break;
         } else {
-          shiftSwitch(sessionStorage.lang, keysAll, true, caps);
+          switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
           event.target.addEventListener('mouseup', () => {
-            shiftSwitch(sessionStorage.lang, keysAll, false, caps);
+            switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
           });
         }
         break;
@@ -338,7 +338,7 @@ keysArea.addEventListener('mousedown', (event) => {
         }
         caps = !caps;
         event.target.classList.add('active');
-        capsSwitch(sessionStorage.lang, keysAll, caps);
+        switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
         if (caps === false) {
           event.target.classList.remove('active');
         }
