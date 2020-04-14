@@ -40,7 +40,20 @@ switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
 const callInfo = document.createElement('div'); // start info block
 const callInfoDescription = document.createElement('p');
 
-keysAll[60].classList.add('pulse'); // add pulse effect to ctrl right when call-info is active
+const ctrlRightKey = keysAll[60];
+const rightKey = keysAll[63];
+const downKey = keysAll[62];
+const leftKey = keysAll[61];
+const leftAltKey = keysAll[57];
+const shiftLeftKey = keysAll[42];
+const capsLockKey = keysAll[29];
+const upKey = keysAll[54];
+const ctrlLeftKey = keysAll[55];
+const winKey = keysAll[56];
+const altRightKey = keysAll[59];
+
+
+ctrlRightKey.classList.add('pulse'); // add pulse effect to ctrl right when call-info is active
 
 callInfo.className = 'call-info';
 callInfoDescription.className = 'call-info__description';
@@ -107,50 +120,49 @@ errorInfo.innerHTML = 'Упс! Данная клавиша взяла трудо
 
 langInfo.innerHTML = sessionStorage.getItem('lang'); // change showing language info block after restart page
 
-
 callInfo.addEventListener('animationend', () => {
   callInfo.classList.add('hide');
-  keysAll[60].classList.remove('pulse'); // remove pulse effect
+  ctrlRightKey.classList.remove('pulse'); // remove pulse effect
   infoBlocks = false;
 });
 
 info.addEventListener('animationend', () => {
   info.classList.add('hide');
-  keysAll[57].classList.remove('pulse'); // remove pulse effect
-  keysAll[29].classList.add('pulse_great-mind');
+  leftAltKey.classList.remove('pulse'); // remove pulse effectKey
+  capsLockKey.classList.add('pulse_great-mind');
   shiftInfo.classList.remove('hide');
 });
 
 shiftInfo.addEventListener('animationend', () => {
   shiftInfo.classList.add('hide');
   navigationInfo.classList.remove('hide');
-  keysAll[42].classList.remove('pulse'); // remove pulse effect (shift left)
-  keysAll[29].classList.remove('pulse_great-mind'); // remove pulse effect (caps lock)
-  keysAll[63].classList.add('pulse'); // add pulse effect ([→])
-  keysAll[61].classList.add('pulse'); // add pulse effect ([←])
+  shiftLeftKey.classList.remove('pulse'); // remove pulse effect (shift left)Key
+  capsLockKey.classList.remove('pulse_great-mind'); // remove pulse effect (caps lock)
+  rightKey.classList.add('pulse'); // add pulse effect ([→])
+  leftKey.classList.add('pulse'); // add pulse effect ([←])
 });
 
 navigationInfo.addEventListener('animationend', () => {
   navigationInfo.classList.add('hide');
-  keysAll[63].classList.remove('pulse'); // remove pulse effect ([→])
-  keysAll[61].classList.remove('pulse'); // remove pulse effect ([←])
+  rightKey.classList.remove('pulse'); // remove pulse effect ([→])
+  leftKey.classList.remove('pulse'); // remove pulse effect ([←])
   greatMind.classList.remove('hide');
-  keysAll[62].classList.add('pulse_great-mind'); // add pulse effect ([↓])
-  keysAll[54].classList.add('pulse_great-mind'); // add pulse effect ([↑])
+  downKey.classList.add('pulse_great-mind'); // add pulse effect ([↓])
+  upKey.classList.add('pulse_great-mind'); // add pulse effect ([↑])
 });
 
 greatMind.addEventListener('animationend', () => {
   greatMind.classList.add('hide');
-  keysAll[62].classList.remove('pulse_great-mind'); // remove pulse effect ([↓])
-  keysAll[54].classList.remove('pulse_great-mind'); // remove pulse effect ([↑])
+  downKey.classList.remove('pulse_great-mind'); // remove pulse effect ([↓])
+  upKey.classList.remove('pulse_great-mind'); // remove pulse effect ([↑])
   infoBlocks = false; // block ending
 });
 
 errorInfo.addEventListener('animationend', () => {
   errorInfo.classList.add('hide');
-  keysAll[55].classList.remove('pulse'); // remove pulse effect (CtrlLeft)
-  keysAll[56].classList.remove('pulse'); // remove pulse effect (Win)
-  keysAll[59].classList.remove('pulse'); // remove pulse effect (AltRight)
+  ctrlLeftKey.classList.remove('pulse'); // remove pulse effect (CtrlLeft)
+  winKey.classList.remove('pulse'); // remove pulse effect (Win)
+  altRightKey.classList.remove('pulse'); // remove pulse effect (AltRight)
 });
 
 // create lang switch function
@@ -251,8 +263,8 @@ document.addEventListener('keydown', (event) => {
           } else {
             infoBlocks = true;
             info.classList.remove('hide');
-            keysAll[57].classList.add('pulse'); // add pulse effect
-            keysAll[42].classList.add('pulse'); // add pulse effect to Shift
+            leftAltKey.classList.add('pulse'); // add pulse effect
+            shiftLeftKey.classList.add('pulse'); // add pulse effect to Shift
           }
           break;
 
@@ -290,7 +302,7 @@ document.addEventListener('keyup', (event) => {
         case 'ShiftRight':
           shift = false;
           keyF.classList.remove('active'); // shift right
-          keysAll[42].classList.remove('active'); // shift left
+          shiftLeftKey.classList.remove('active'); // shift left
           switchKeys(sessionStorage.getItem('lang'), keysAll, shift, caps);
           break;
 
@@ -385,8 +397,8 @@ keysArea.addEventListener('mousedown', (event) => {
         } else {
           infoBlocks = true;
           info.classList.remove('hide');
-          keysAll[57].classList.add('pulse'); // add pulse effect to Alt
-          keysAll[42].classList.add('pulse'); // add pulse effect to Shift
+          leftAltKey.classList.add('pulse'); // add pulse effect to Alt
+          shiftLeftKey.classList.add('pulse'); // add pulse effect to Shift
         }
         break;
 
@@ -395,7 +407,7 @@ keysArea.addEventListener('mousedown', (event) => {
           break;
         } else {
           errorInfo.classList.remove('hide');
-          keysAll[55].classList.add('pulse'); // add pulse effect to CtrlLeft
+          ctrlLeftKey.classList.add('pulse'); // add pulse effect to CtrlLeft
         }
         break;
 
@@ -404,7 +416,7 @@ keysArea.addEventListener('mousedown', (event) => {
           break;
         } else {
           errorInfo.classList.remove('hide');
-          keysAll[56].classList.add('pulse'); // add pulse effect to Win
+          winKey.classList.add('pulse'); // add pulse effect to Win
         }
         break;
 
@@ -413,7 +425,7 @@ keysArea.addEventListener('mousedown', (event) => {
           break;
         } else {
           errorInfo.classList.remove('hide');
-          keysAll[59].classList.add('pulse'); // add pulse effect to Al
+          altRightKey.classList.add('pulse'); // add pulse effect to Al
         }
         break;
 
