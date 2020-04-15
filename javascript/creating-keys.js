@@ -1,110 +1,59 @@
-import {
-  rusLow, rusUpper, rusShift, enLow, enUpper, enShift,
-} from './languages.js';
+import LANGUAGES from './languages.js';
 
-function createKeys(array, divTarget) { // creating blank keys
-  array.forEach((elem) => { // creating rows
+function createKeys(array, divTarget) {
+  array.forEach((elem) => {
     const divRow = document.createElement('div');
     divRow.className = 'row';
     divTarget.append(divRow);
 
     elem.forEach((key) => {
-      const divKey = document.createElement('div'); // creating keys
+      const divKey = document.createElement('div');
 
       divKey.className = 'key';
       divKey.setAttribute('id', key.id);
 
       if (key.class) {
-        // add func class to key
         divKey.classList.add('func');
         divKey.classList.add(key.class);
       }
 
-      divRow.append(divKey); // add key to row
+      divRow.append(divKey);
     });
   });
 }
 
-function addLetterToInput(input, letter) { // adding letters to textarea
+function addLetterToInput(input, letter) {
   input.setRangeText(letter, input.selectionStart, input.selectionEnd, 'end');
   input.focus();
 }
 
-function addLetter(lang, keys, caps) { // adding letters to keys when switch language
-  const newKeys = keys;
+function switchKeys(lang, keys, shift, caps) {
+  const newKeys = keys.querySelectorAll('.key');
+  const keyboard = document.querySelector('.virtual-keyboard');
+  let mode = 'LOW';
 
-  for (let i = 0; i < rusLow.length; (i += 1)) {
-    if (lang === 'ru') {
-      if (caps === true) {
-        newKeys[i].innerHTML = rusUpper[i];
-      } else newKeys[i].innerHTML = rusLow[i];
-    } else if (caps === true) {
-      newKeys[i].innerHTML = enUpper[i];
-    } else newKeys[i].innerHTML = enLow[i];
+  if (keyboard) {
+    keys.remove();
   }
-}
 
-function capsSwitch(lang, keys, caps) { // switch letters when press caps_lock
-  const upperKeys = keys;
-  for (let i = 0; i < rusLow.length; (i += 1)) {
-    switch (lang) {
-      case 'ru':
-
-        switch (caps) {
-          case true:
-            upperKeys[i].innerHTML = rusUpper[i];
-            break;
-          default:
-            upperKeys[i].innerHTML = rusLow[i];
-        }
-        break;
-
-      default:
-        switch (caps) {
-          case true:
-            upperKeys[i].innerHTML = enUpper[i];
-            break;
-
-          default:
-            upperKeys[i].innerHTML = enLow[i];
-        }
-    }
+  if (caps) {
+    mode = 'UPPER';
   }
-}
+  if (shift) {
+    mode = 'SHIFT';
+  }
 
-function shiftSwitch(lang, keys, shiftActive, caps) { // switch letters when press shift
-  const upperKeys = keys;
-  for (let i = 0; i < rusLow.length; (i += 1)) {
-    switch (lang) {
-      case 'ru':
+  const currentKeysCollection = LANGUAGES[lang][mode];
 
-        switch (shiftActive) {
-          case true:
-            upperKeys[i].innerHTML = rusShift[i];
-            break;
+  for (let i = 0; i < currentKeysCollection.length; (i += 1)) {
+    newKeys[i].innerHTML = currentKeysCollection[i];
+  }
 
-          default:
-            if (caps === true) {
-              upperKeys[i].innerHTML = rusUpper[i];
-            } else upperKeys[i].innerHTML = rusLow[i];
-        }
-        break;
-
-      default:
-        switch (shiftActive) {
-          case true:
-            upperKeys[i].innerHTML = enShift[i];
-            break;
-
-          default:
-            if (caps === true) {
-              upperKeys[i].innerHTML = enUpper[i];
-            } else upperKeys[i].innerHTML = enLow[i];
-        }
-    }
+  if (keyboard) {
+    keyboard.append(keys);
   }
 }
 
 export {
-  createKeys, addLetterToInput, addLetter, capsSwitch, shiftSwitch,
+  createKeys, addLetterToInput, switchKeys,
 };

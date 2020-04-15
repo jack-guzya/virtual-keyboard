@@ -1,312 +1,284 @@
 import idKeys from './javascript/keys.js';
 import {
-  createKeys, addLetterToInput, addLetter, capsSwitch, shiftSwitch,
+  createKeys, addLetterToInput, switchKeys,
 } from './javascript/creating-keys.js';
-
-// create session storage
-
-if (sessionStorage.getItem('lang') === null) {
-  sessionStorage.setItem('lang', 'ru');
-}
 
 let caps = false;
 let shift = false;
 let infoBlocks = true;
 
-// create basic structure
-
 const virtualKeyboard = document.createElement('div');
 const textArea = document.createElement('textarea');
 const keysArea = document.createElement('div');
 
-virtualKeyboard.className = 'virtual-keyboard';
-keysArea.className = 'keys-area';
-
-document.body.append(virtualKeyboard);
-virtualKeyboard.append(textArea);
-virtualKeyboard.append(keysArea);
-
-createKeys(idKeys, keysArea);
-
-
-const keysAll = keysArea.querySelectorAll('.key');
-const keys = keysArea.querySelectorAll('div[class=key]');
-const keysFunc = keysArea.querySelectorAll('.func');
-
-addLetter(sessionStorage.lang, keysAll, caps);
-
-// create info blocks
-
-const callInfo = document.createElement('div'); // start info block
+const callInfo = document.createElement('div');
 const callInfoDescription = document.createElement('p');
-
-keysAll[60].classList.add('pulse'); // add pulse effect to ctrl right when call-info is active
-
-callInfo.className = 'call-info';
-callInfoDescription.className = 'call-info__description';
-
-const info = document.createElement('div'); // info of OS
+const info = document.createElement('div');
 const osInfo = document.createElement('p');
 const langSwitchInfo = document.createElement('p');
 
-info.className = 'info';
-info.classList.add('hide');
-osInfo.className = 'info__os';
-langSwitchInfo.className = 'info__lang-switch';
+const langInfo = document.createElement('div');
+const shiftInfo = document.createElement('div');
+const navigationInfo = document.createElement('div');
+const greatMind = document.createElement('div');
+const errorInfo = document.createElement('div');
 
-const langInfo = document.createElement('div'); // language info block (ru/en)
-langInfo.className = 'lang-info';
-langInfo.classList.add('hide');
+function createSessionStorage() {
+  if (sessionStorage.getItem('lang') === null) {
+    sessionStorage.setItem('lang', 'RU');
+  }
+}
 
-const shiftInfo = document.createElement('div'); // shift info block
-shiftInfo.className = 'info__shift';
-shiftInfo.classList.add('hide');
+function createLayout() {
+  virtualKeyboard.className = 'virtual-keyboard';
+  keysArea.className = 'keys-area';
+  virtualKeyboard.append(textArea, keysArea);
+  createKeys(idKeys, keysArea);
+  switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
+  document.body.append(virtualKeyboard);
+}
 
-const navigationInfo = document.createElement('div'); // navigation info block ([←] & [→])
-navigationInfo.className = 'info__navigation';
-navigationInfo.classList.add('hide');
+function createInfoBlocks() {
+  callInfo.className = 'call-info';
+  callInfoDescription.className = 'call-info__description';
 
-const greatMind = document.createElement('div'); // navigation info block ([↓] & [↑])
-greatMind.className = 'info__great-mind';
-greatMind.classList.add('hide');
+  info.className = 'info';
+  info.classList.add('hide');
+  osInfo.className = 'info__os';
+  langSwitchInfo.className = 'info__lang-switch';
 
-const errorInfo = document.createElement('div'); // error info block
-errorInfo.className = 'info__error';
-errorInfo.classList.add('hide');
+  langInfo.className = 'lang-info';
+  langInfo.classList.add('hide');
 
-document.body.append(langInfo);
+  shiftInfo.className = 'info__shift';
+  shiftInfo.classList.add('hide');
 
-virtualKeyboard.append(callInfo);
-callInfo.append(callInfoDescription);
+  navigationInfo.className = 'info__navigation';
+  navigationInfo.classList.add('hide');
 
+  greatMind.className = 'info__great-mind';
+  greatMind.classList.add('hide');
 
-virtualKeyboard.append(info);
-info.append(osInfo);
-info.append(langSwitchInfo);
+  errorInfo.className = 'info__error';
+  errorInfo.classList.add('hide');
 
-virtualKeyboard.append(shiftInfo);
+  document.body.append(langInfo);
+  callInfo.append(callInfoDescription);
+  info.append(osInfo, langSwitchInfo);
+  virtualKeyboard.append(callInfo, info, shiftInfo, navigationInfo, errorInfo, greatMind);
 
-virtualKeyboard.append(navigationInfo);
+  osInfo.innerHTML = 'Клавиатура разработана для операционной системы Windows';
+  langSwitchInfo.innerHTML = 'Для переключения языка нажмите Alt+Shift на физической или Alt Left на виртуальной клавиатуре';
+  callInfoDescription.innerHTML = 'Для вызова справки нажмите Ctrl Right';
+  shiftInfo.innerHTML = 'Клавиша Shift Left зажимается на виртуальной клавиатуре автоматически при клике мышкой. При зажатой клавише Shift Left клавиша Сapslock недоступна (она вам и не нужна при таком сценарии)';
+  navigationInfo.innerHTML = 'Навигация по тексту осуществляется клавишами [←] и [→]';
+  greatMind.innerHTML = 'Эти клавиши просто рисуют стрелки [↓] и [↑]. Не спрашивайте меня, почему именно так - это задумка Великого разума, нам этого не постичь';
+  errorInfo.innerHTML = 'Упс! Данная клавиша взяла трудовой отпуск';
+  langInfo.innerHTML = sessionStorage.getItem('lang');
+}
 
-virtualKeyboard.append(errorInfo);
+function langSwitch() {
+  if (sessionStorage.getItem('lang') === 'RU') {
+    sessionStorage.setItem('lang', 'EN');
+    switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
+    langInfo.innerHTML = sessionStorage.getItem('lang');
+    langInfo.classList.remove('hide');
+  } else {
+    sessionStorage.setItem('lang', 'RU');
+    switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
+    langInfo.innerHTML = sessionStorage.getItem('lang');
+    langInfo.classList.remove('hide');
+  }
+}
 
-virtualKeyboard.append(greatMind);
+function init() {
+  createSessionStorage();
+  createLayout();
+  createInfoBlocks();
+}
 
-osInfo.innerHTML = 'Клавиатура разработана для операционной системы Windows';
-langSwitchInfo.innerHTML = 'Для переключения языка нажмите Alt+Shift на физической или Alt Left на виртуальной клавиатуре';
+init();
 
-callInfoDescription.innerHTML = 'Для вызова справки нажмите Ctrl Right';
+const keysAll = keysArea.querySelectorAll('.key');
+const ctrlRightKey = keysAll[60];
+const rightKey = keysAll[63];
+const downKey = keysAll[62];
+const leftKey = keysAll[61];
+const leftAltKey = keysAll[57];
+const shiftLeftKey = keysAll[42];
+const capsLockKey = keysAll[29];
+const upKey = keysAll[54];
+const ctrlLeftKey = keysAll[55];
+const winKey = keysAll[56];
+const altRightKey = keysAll[59];
 
-shiftInfo.innerHTML = 'Клавиша Shift Left зажимается на виртуальной клавиатуре автоматически при клике мышкой. При зажатой клавише Shift Left клавиша Сapslock недоступна (она вам и не нужна при таком сценарии)';
-
-navigationInfo.innerHTML = 'Навигация по тексту осуществляется клавишами [←] и [→]';
-
-greatMind.innerHTML = 'Эти клавиши просто рисуют стрелки [↓] и [↑]. Не спрашивайте меня, почему именно так - это задумка Великого разума, нам этого не постичь';
-
-errorInfo.innerHTML = 'Упс! Данная клавиша взяла трудовой отпуск';
-
-langInfo.innerHTML = sessionStorage.getItem('lang'); // change showing language info block after restart page
-
-
+ctrlRightKey.classList.add('pulse');
 callInfo.addEventListener('animationend', () => {
   callInfo.classList.add('hide');
-  keysAll[60].classList.remove('pulse'); // remove pulse effect
+  ctrlRightKey.classList.remove('pulse');
   infoBlocks = false;
 });
 
 info.addEventListener('animationend', () => {
   info.classList.add('hide');
-  keysAll[57].classList.remove('pulse'); // remove pulse effect
-  keysAll[29].classList.add('pulse_great-mind');
+  leftAltKey.classList.remove('pulse');
+  capsLockKey.classList.add('pulse_great-mind');
   shiftInfo.classList.remove('hide');
 });
 
 shiftInfo.addEventListener('animationend', () => {
   shiftInfo.classList.add('hide');
   navigationInfo.classList.remove('hide');
-  keysAll[42].classList.remove('pulse'); // remove pulse effect (shift left)
-  keysAll[29].classList.remove('pulse_great-mind'); // remove pulse effect (caps lock)
-  keysAll[63].classList.add('pulse'); // add pulse effect ([→])
-  keysAll[61].classList.add('pulse'); // add pulse effect ([←])
+  shiftLeftKey.classList.remove('pulse');
+  capsLockKey.classList.remove('pulse_great-mind');
+  rightKey.classList.add('pulse');
+  leftKey.classList.add('pulse');
 });
 
 navigationInfo.addEventListener('animationend', () => {
   navigationInfo.classList.add('hide');
-  keysAll[63].classList.remove('pulse'); // remove pulse effect ([→])
-  keysAll[61].classList.remove('pulse'); // remove pulse effect ([←])
+  rightKey.classList.remove('pulse');
+  leftKey.classList.remove('pulse');
   greatMind.classList.remove('hide');
-  keysAll[62].classList.add('pulse_great-mind'); // add pulse effect ([↓])
-  keysAll[54].classList.add('pulse_great-mind'); // add pulse effect ([↑])
+  downKey.classList.add('pulse_great-mind');
+  upKey.classList.add('pulse_great-mind');
 });
 
 greatMind.addEventListener('animationend', () => {
   greatMind.classList.add('hide');
-  keysAll[62].classList.remove('pulse_great-mind'); // remove pulse effect ([↓])
-  keysAll[54].classList.remove('pulse_great-mind'); // remove pulse effect ([↑])
-  infoBlocks = false; // block ending
+  downKey.classList.remove('pulse_great-mind');
+  upKey.classList.remove('pulse_great-mind');
+  infoBlocks = false;
 });
 
 errorInfo.addEventListener('animationend', () => {
   errorInfo.classList.add('hide');
-  keysAll[55].classList.remove('pulse'); // remove pulse effect (CtrlLeft)
-  keysAll[56].classList.remove('pulse'); // remove pulse effect (Win)
-  keysAll[59].classList.remove('pulse'); // remove pulse effect (AltRight)
+  ctrlLeftKey.classList.remove('pulse');
+  winKey.classList.remove('pulse');
+  altRightKey.classList.remove('pulse');
 });
 
-// create lang switch function
-
-function langSwitch() {
-  if (sessionStorage.getItem('lang') === 'ru') {
-    sessionStorage.setItem('lang', 'en');
-    addLetter(sessionStorage.lang, keysAll, caps);
-    langInfo.innerHTML = sessionStorage.getItem('lang');
-    langInfo.classList.remove('hide');
-  } else {
-    sessionStorage.setItem('lang', 'ru');
-    addLetter(sessionStorage.lang, keysAll, caps);
-    langInfo.innerHTML = sessionStorage.getItem('lang');
-    langInfo.classList.remove('hide');
-  }
-}
+info.addEventListener('animationend', () => {
+  info.classList.add('hide');
+});
 
 langInfo.addEventListener('animationend', () => {
   langInfo.classList.add('hide');
 });
 
-// Add event to keys
-
 document.addEventListener('keydown', (event) => {
-  keys.forEach((key) => { // add action to keys
-    if (key.getAttribute('id') === event.code) {
-      event.preventDefault();
+  const keyTarget = document.getElementById(`${event.code}`);
+  event.preventDefault();
+  keyTarget.classList.add('active');
 
-      key.classList.add('active');
-      addLetterToInput(textArea, key.innerHTML);
-    }
-  });
+  switch (event.code) {
+    case 'Tab':
+      addLetterToInput(textArea, '   ');
+      break;
 
-  keysFunc.forEach((keyF) => { // add action to function keys
-    if (keyF.getAttribute('id') === event.code) {
-      keyF.classList.add('active');
-      event.preventDefault();
+    case 'Space':
+      addLetterToInput(textArea, ' ');
+      break;
 
-      switch (event.code) {
-        case 'Tab':
-          addLetterToInput(textArea, '   ');
-          break;
-
-        case 'Space':
-          addLetterToInput(textArea, ' ');
-          break;
-
-        case 'CapsLock':
-          caps = !caps;
-          capsSwitch(sessionStorage.lang, keysAll, caps);
-          if (caps === false) {
-            keyF.classList.remove('active');
-          }
-          break;
-
-        case 'ShiftLeft':
-        case 'ShiftRight':
-          shift = false;
-          shiftSwitch(sessionStorage.lang, keysAll, true, caps);
-          break;
-
-        case 'ArrowUp':
-          addLetterToInput(textArea, '↑');
-          break;
-
-        case 'ArrowLeft':
-          textArea.selectionStart -= 1;
-          textArea.selectionEnd -= 1;
-          textArea.focus();
-          break;
-
-        case 'ArrowDown':
-          addLetterToInput(textArea, '↓');
-          break;
-
-        case 'ArrowRight':
-          textArea.selectionStart += 1;
-          break;
-
-        case 'Backspace':
-          if (textArea.selectionStart === 0) {
-            break;
-          } else textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
-          break;
-
-        case 'Delete':
-          textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
-          break;
-
-        case 'Enter':
-          addLetterToInput(textArea, '\n');
-          break;
-
-        case 'ControlRight':
-          if (infoBlocks === true) { // info blocks already running
-            break;
-          } else {
-            infoBlocks = true;
-            info.classList.remove('hide');
-            keysAll[57].classList.add('pulse'); // add pulse effect
-            keysAll[42].classList.add('pulse'); // add pulse effect to Shift
-          }
-          break;
-
-        default:
+    case 'CapsLock':
+      caps = !caps;
+      switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
+      if (caps === false) {
+        keyTarget.classList.remove('active');
       }
-    }
-  });
+      break;
 
-  info.addEventListener('animationend', () => {
-    info.classList.add('hide');
-  });
+    case 'ShiftLeft':
+    case 'ShiftRight':
+      shift = true;
+      switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
+      break;
 
-  if (event.shiftKey && event.altKey) { // switch language
+    case 'ArrowUp':
+      addLetterToInput(textArea, '↑');
+      break;
+
+    case 'ArrowLeft':
+      textArea.selectionStart -= 1;
+      textArea.selectionEnd -= 1;
+      textArea.focus();
+      break;
+
+    case 'ArrowDown':
+      addLetterToInput(textArea, '↓');
+      break;
+
+    case 'ArrowRight':
+      textArea.selectionStart += 1;
+      break;
+
+    case 'Backspace':
+      if (textArea.selectionStart === 0) {
+        break;
+      } else textArea.setRangeText('', textArea.selectionStart -= 1, textArea.selectionEnd, 'end');
+      break;
+
+    case 'Delete':
+      textArea.setRangeText('', textArea.selectionStart, textArea.selectionEnd += 1, 'end');
+      break;
+
+    case 'Enter':
+      addLetterToInput(textArea, '\n');
+      break;
+
+    case 'ControlRight':
+      if (infoBlocks === true) {
+        break;
+      } else {
+        infoBlocks = true;
+        info.classList.remove('hide');
+        leftAltKey.classList.add('pulse');
+        shiftLeftKey.classList.add('pulse');
+      }
+      break;
+
+    case 'ControlLeft':
+    case 'MetaLeft':
+    case 'AltLeft':
+    case 'AltRight':
+      break;
+
+    default:
+      addLetterToInput(textArea, keyTarget.innerHTML);
+  }
+
+  if (event.shiftKey && event.altKey) {
     langSwitch();
   }
 });
 
 document.addEventListener('keyup', (event) => {
-  keys.forEach((key) => { // add action to keys when committed keyup event
-    if (key.getAttribute('id') === event.code) {
-      key.classList.remove('active');
-    }
-  });
+  const keyTarget = document.getElementById(`${event.code}`);
 
-  keysFunc.forEach((keyF) => { // add action to function keys when committed keyup event
-    if (keyF.getAttribute('id') === event.code) {
-      switch (event.code) {
-        case 'CapsLock':
-          if (!caps) {
-            keyF.classList.remove('active');
-            break;
-          } else break;
+  switch (event.code) {
+    case 'CapsLock':
+      if (!caps) {
+        keyTarget.classList.remove('active');
+        break;
+      } else break;
 
-        case 'ShiftLeft':
-        case 'ShiftRight':
-          shift = false;
-          keyF.classList.remove('active'); // shift right
-          keysAll[42].classList.remove('active'); // shift left
-          shiftSwitch(sessionStorage.lang, keysAll, false, caps);
-          break;
+    case 'ShiftLeft':
+    case 'ShiftRight':
+      shift = false;
+      keyTarget.classList.remove('active');
+      shiftLeftKey.classList.remove('active');
+      switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
+      break;
 
-        default:
-          keyF.classList.remove('active');
-      }
-    }
-  });
+    default:
+      keyTarget.classList.remove('active');
+  }
 });
-
-// add events to virtual keys
 
 keysArea.addEventListener('mousedown', (event) => {
   if (/^key$/.test(event.target.getAttribute('class'))) {
-    addLetterToInput(textArea, event.target.innerHTML); // add events to virtual keys
-  } else { // add events to virtual  function keys
+    addLetterToInput(textArea, event.target.innerHTML);
+  } else {
     switch (event.target.getAttribute('id')) {
       case 'Tab':
         addLetterToInput(textArea, '   ');
@@ -315,30 +287,30 @@ keysArea.addEventListener('mousedown', (event) => {
       case 'ShiftLeft':
         shift = !shift;
         event.target.classList.add('active');
-        shiftSwitch(sessionStorage.lang, keysAll, shift, caps);
+        switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
         if (shift === false) {
           event.target.classList.remove('active');
         }
         break;
 
       case 'ShiftRight':
-        if (shift === true) { // if shift left is active
+        if (shift === true) {
           break;
         } else {
-          shiftSwitch(sessionStorage.lang, keysAll, true, caps);
+          switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
           event.target.addEventListener('mouseup', () => {
-            shiftSwitch(sessionStorage.lang, keysAll, false, caps);
+            switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
           });
         }
         break;
 
       case 'CapsLock':
-        if (shift === true) { // if shift left is active
+        if (shift === true) {
           break;
         }
         caps = !caps;
         event.target.classList.add('active');
-        capsSwitch(sessionStorage.lang, keysAll, caps);
+        switchKeys(sessionStorage.getItem('lang'), keysArea, shift, caps);
         if (caps === false) {
           event.target.classList.remove('active');
         }
@@ -380,13 +352,13 @@ keysArea.addEventListener('mousedown', (event) => {
         break;
 
       case 'ControlRight':
-        if (infoBlocks === true) { // info blocks already running {
+        if (infoBlocks === true) {
           break;
         } else {
           infoBlocks = true;
           info.classList.remove('hide');
-          keysAll[57].classList.add('pulse'); // add pulse effect to Alt
-          keysAll[42].classList.add('pulse'); // add pulse effect to Shift
+          leftAltKey.classList.add('pulse');
+          shiftLeftKey.classList.add('pulse');
         }
         break;
 
@@ -395,7 +367,7 @@ keysArea.addEventListener('mousedown', (event) => {
           break;
         } else {
           errorInfo.classList.remove('hide');
-          keysAll[55].classList.add('pulse'); // add pulse effect to CtrlLeft
+          ctrlLeftKey.classList.add('pulse');
         }
         break;
 
@@ -404,7 +376,7 @@ keysArea.addEventListener('mousedown', (event) => {
           break;
         } else {
           errorInfo.classList.remove('hide');
-          keysAll[56].classList.add('pulse'); // add pulse effect to Win
+          winKey.classList.add('pulse');
         }
         break;
 
@@ -413,7 +385,7 @@ keysArea.addEventListener('mousedown', (event) => {
           break;
         } else {
           errorInfo.classList.remove('hide');
-          keysAll[59].classList.add('pulse'); // add pulse effect to Al
+          altRightKey.classList.add('pulse');
         }
         break;
 
